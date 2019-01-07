@@ -18,7 +18,7 @@ def filter_for_semester(files_data: List, semester: str) -> List:
     """
     final = list()
     for x in files_data:
-        y = x.split(',')
+        y = x.split('|')
         if semester in y[9]:
             final.append(x)
     return final
@@ -32,7 +32,7 @@ def get_rows_with_usage(files_data: List) -> List:
     """
     final = list()
     for x in files_data:
-        y = x.split(',')
+        y = x.split('|')
         if int(y[13]) > 0 or int(y[15]) > 2 or int(y[16]) > 0 or int(y[18]) > 0:
             final.append(x)
     return final
@@ -46,7 +46,7 @@ def remove_duplicate_crn(files_data: List) -> List[str]:
     """
     seen_crns: List[str] = []
     for x in files_data:
-        y = x.split(',')
+        y = x.split('|')
         if y[9][5:] not in seen_crns:
             seen_crns.append(y[9][5:])
         elif y[9][5:] in seen_crns:
@@ -62,7 +62,7 @@ def remove_duplicate_royal(files_data: List) -> List[str]:
     """
     seen_royal: List[str] = []
     for x in files_data:
-        y = x.split(',')
+        y = x.split('|')
         if y[3] not in seen_royal:
             seen_royal.append(x)
         elif y[3] in seen_royal:
@@ -87,11 +87,11 @@ def parse_files(usage: str, full_time: str, part_time: str, semester: str) -> di
     full_r = list()
     part_r = list()
     for x in full_time_file:
-        y = x.split(',')
+        y = x.split('|')
         full_r.append(y[0])
     part_time_file = open(part_time, 'r').readlines()
     for x in part_time_file:
-        y = x.split(',')
+        y = x.split('|')
         part_r.append(y[0])
     full = list()
     part = list()
@@ -101,7 +101,7 @@ def parse_files(usage: str, full_time: str, part_time: str, semester: str) -> di
     for x in range(len(full_r)):
         full_r[x] = full_r[x].strip("\"")
     for x in no_dup_r:
-        y = x.split(',')
+        y = x.split('|')
         if y[3] in full_r:
             full.append(y)
         elif y[3] in part_r:
@@ -129,7 +129,7 @@ def calculate_stats(file_data: dict) -> dict:
             'discussion': 0
             }
     for course in file_data['semester_no_dup_crn']:
-        x = course.split(',')
+        x = course.split('|')
         if int(x[13]) <= 0: specifics['assignments'] += 1
         if int(x[15]) <= 2: specifics['grade'] += 1
         if int(x[16]) <= 0: specifics['graded'] += 1
