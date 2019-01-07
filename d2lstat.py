@@ -51,7 +51,7 @@ def remove_duplicate_crn(files_data: List) -> List[str]:
         if y[9][-5:] not in seen_crns:
             seen_crns.append(y[9][-5:])
             ret_val.append(x)
-    for x in files_data:
+    for x in ret_val:
         y = x.split('|')
         print(y[9][-5:])
     print("Number of unique CRNs {}".format(len(files_data)))
