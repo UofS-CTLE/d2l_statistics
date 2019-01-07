@@ -45,13 +45,17 @@ def remove_duplicate_crn(files_data: List) -> List[str]:
     :return:
     """
     seen_crns: List[str] = []
+    ret_val: List[str] = []
     for x in files_data:
         y = x.split('|')
-        if y[9][5:] not in seen_crns:
-            seen_crns.append(y[9][5:])
-        elif y[9][5:] in seen_crns:
-            files_data.remove(x)
-    return files_data
+        if y[9][-5:] not in seen_crns:
+            seen_crns.append(y[9][-5:])
+            ret_val.append(x)
+    for x in files_data:
+        y = x.split('|')
+        print(y[9][-5:])
+    print("Number of unique CRNs {}".format(len(files_data)))
+    return ret_val
 
 
 def remove_duplicate_royal(files_data: List) -> List[str]:
@@ -61,13 +65,13 @@ def remove_duplicate_royal(files_data: List) -> List[str]:
     :return:
     """
     seen_royal: List[str] = []
+    ret_val: List[str] = []
     for x in files_data:
         y = x.split('|')
         if y[3] not in seen_royal:
             seen_royal.append(x)
-        elif y[3] in seen_royal:
-            files_data.remove(x)
-    return files_data
+            ret_val.append(x)
+    return ret_val
 
 
 def parse_files(usage: str, full_time: str, part_time: str, semester: str) -> dict:
