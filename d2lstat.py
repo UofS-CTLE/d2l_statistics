@@ -33,7 +33,7 @@ def get_rows_with_usage(files_data: List) -> List:
     final = list()
     for x in files_data:
         y = x.split(',')
-        if not (int(y[13]) <= 0 or int(y[15]) <= 2 or int(y[16]) <= 0 or int(y[18]) <= 0):
+        if int(y[13]) > 0 or int(y[15]) > 2 or int(y[16]) > 0 or int(y[18]) > 0:
             final.append(x)
     return final
 
@@ -119,10 +119,27 @@ def parse_files(usage: str, full_time: str, part_time: str, semester: str) -> di
 def calculate_stats(file_data: dict) -> dict:
     """
 
-    :param file_data:
-    :return:
+    :param file_data: The data produced by the parse function.
+    :return: The statistics data required for the report generator.
     """
-    pass
+    specifics = {
+            'assignments': 0,
+            'grade': 0,
+            'graded': 0,
+            'discussion': 0
+            }
+    for course in file_data['semester_no_dup_crn']:
+        x = course.split(',')
+        if int(x[13]) <= 0: specifics['assignments'] += 1
+        if int(x[15]) <= 2: specifics['grade'] += 1
+        if int(x[16]) <= 0: specifics['graded'] += 1
+        if int(x[18]) <= 0: specifics['discussion'] += 1
+    return {'courses_with_usage': len(file_data['semester_no_dup_crn']),
+            'faculty_with_usage': len(file_data['semester_no_dup_r']),
+            'full_time': len(file_data['full_time']),
+            'part_time': len(file_data['part_time']),
+            'staff': len(file_data['staff']),
+            'specifics': specifics}
 
 
 def generate_document(stats: dict) -> dict:
@@ -131,7 +148,16 @@ def generate_document(stats: dict) -> dict:
     :param stats:
     :return:
     """
-    pass
+    print('Courses with usage: {}'.format(stats['courses_with_usage']))
+    print('Faculty with usage: {}'.format(stats['faculty_with_usage']))
+    print('Full-time with usage: {}'.format(stats['full_time']))
+    print('Part-time: {}'.format(stats['part_time']))
+    print('Staff: {}'.format(stats['staff']))
+    print('Courses with Assignments: {}'.format(stats['specifics']['assignments']))
+    print('Courses with Grade Items: {}'.format(stats['specifics']['grade']))
+    print('Courses with Graded Grade Items: {}'.format(stats['specifics']['graded']))
+    print('Courses with Discussion Posts: {}'.format(stats['specifics']['discussion']))
+    
 
 
 def main(usage: str, full_time: str, part_time: str, semester: str):
@@ -142,7 +168,10 @@ def main(usage: str, full_time: str, part_time: str, semester: str):
     :param part_time: The filename fot the list of part-time faculty.
     :param semester: The name of the semester being processed in the format YYYY_Season.
     """
-    parse_files(usage, full_time, part_time, semester)
+    res = parse_files(usage, full_time, part_time, semester)
+    res = calculate_stats(res)
+    generate_document(res)
+    print("Document report generated.")
 
 
 if __name__ == "__main__":
