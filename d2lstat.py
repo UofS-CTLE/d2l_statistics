@@ -82,7 +82,7 @@ def remove_duplicate_royal(files_data: List) -> List[str]:
     for x in files_data:
         y = x.split(DELIMITER)
         if y[3] not in seen_royal:
-            seen_royal.append(x)
+            seen_royal.append(y[3])
             ret_val.append(x)
     return ret_val
 
