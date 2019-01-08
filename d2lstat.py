@@ -2,6 +2,18 @@
 # -*- coding: utf-8 -*-
 
 """
+d2lstat.py
+
+python d2lstat.py usage_data.csv full_time.csv part_time.csv semester_name
+
+Given a correct data set and lists of full- and part-time teachers, this program will generate usage statistics on a
+given template, which can be edited under the generate_document function.
+
+Authors:
+Dan Ricker <daniel.ricker@scranton.edu>
+Sean Batzel <sean.batzel@scranton.edu>
+
+This program is the property of the UofS-CTLE.
 
 """
 
@@ -9,6 +21,7 @@ import sys
 from typing import List
 
 DELIMITER = '|'
+
 
 def filter_for_semester(files_data: List, semester: str) -> List:
     """
@@ -164,10 +177,8 @@ def generate_document(stats: dict) -> dict:
     print('Courses with Discussion Posts: {}'.format(stats['specifics']['discussion']))
     
 
-
 def main(usage: str, full_time: str, part_time: str, semester: str):
     """
-
     :param usage: The filename of the usage file.
     :param full_time: The filename for the list of full-time faculty.
     :param part_time: The filename fot the list of part-time faculty.
@@ -181,7 +192,7 @@ def main(usage: str, full_time: str, part_time: str, semester: str):
 
 if __name__ == "__main__":
     if len(sys.argv) != 5:
-        print("Missing arguments.")
+        print(__doc__)
         sys.exit(1)
     else:
         main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
