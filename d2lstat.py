@@ -14,7 +14,6 @@ Dan Ricker <daniel.ricker@scranton.edu>
 Sean Batzel <sean.batzel@scranton.edu>
 
 This program is the property of the UofS-CTLE.
-
 """
 
 import sys
