@@ -4,7 +4,7 @@
 """
 d2lstat.py
 
-python d2lstat.py usage_data.csv full_time.csv part_time.csv semester_name
+python d2lstat.py usage_data.csv full_time.csv part_time.csv semester_name number_of_courses_running
 
 Given a correct data set and lists of full- and part-time teachers, this program will generate usage statistics on a
 given template, which can be edited under the generate_document function.
@@ -67,8 +67,6 @@ def remove_duplicate_crn(files_data: List) -> List[str]:
         if y[9][-5:] not in seen_crns:
             seen_crns.append(y[9][-5:])
             ret_val.append(x)
-    for x in ret_val:
-        y = x.split(DELIMITER)
     return ret_val
 
 
@@ -88,13 +86,14 @@ def remove_duplicate_royal(files_data: List) -> List[str]:
     return ret_val
 
 
-def parse_files(usage: str, full_time: str, part_time: str, semester: str) -> dict:
+def parse_files(usage: str, full_time: str, part_time: str, semester: str, total_courses: int) -> dict:
     """
 
     :param usage:
     :param full_time:
     :param part_time:
     :param semester:
+    :param total_courses:
     :return:
     """
     one = filter_for_semester(open(usage, 'r').readlines(), semester)
@@ -130,8 +129,11 @@ def parse_files(usage: str, full_time: str, part_time: str, semester: str) -> di
             'semester_no_dup_r': no_dup_r,
             'semester': two,
             'full_time': full,
+            'len_full': len(full_time_file),
             'part_time': part,
-            'staff': staff}
+            'len_part': len(part_time_file),
+            'staff': staff,
+            'total_courses': total_courses}
 
 
 def calculate_stats(file_data: dict) -> dict:
@@ -156,44 +158,66 @@ def calculate_stats(file_data: dict) -> dict:
             specifics['graded'] += 1
         if int(x[18]) > 0:
             specifics['discussion'] += 1
-    return {'courses_with_usage': len(file_data['semester_no_dup_crn']),
+    return {'semester': file_data['semester'],
+            'courses_with_usage': len(file_data['semester_no_dup_crn']),
             'faculty_with_usage': len(file_data['semester_no_dup_r']),
             'full_time': len(file_data['full_time']),
+            'total_full_time': file_data['len_full'],
             'part_time': len(file_data['part_time']),
+            'total_part_time': file_data['len_part'],
             'staff': len(file_data['staff']),
-            'specifics': specifics}
+            'specifics': specifics,
+            'total_courses': file_data['total_courses']}
 
 
-def generate_document(stats: dict):
+def generate_document(stats: dict, semester: str):
     """
     :param stats:
+    :param semester:
     :return:
     """
     filename = 'report_' + str(date.today()) + '.html'
     with open('raw_html.html', 'r') as f:
         string = f.read()
+    string = string.format(semester,
+                           stats['faculty_with_usage'],
+                           stats['full_time'],
+                           stats['total_full_time'],
+                           (stats['full_time'] / stats['total_full_time']) * 100,
+                           stats['part_time'],
+                           stats['total_part_time'],
+                           (stats['part_time'] / stats['total_part_time']) * 100,
+                           stats['staff'],
+                           stats['courses_with_usage'],
+                           stats['total_courses'],
+                           (stats['courses_with_usage'] / stats['total_courses']) * 100,
+                           stats['specifics']['assignments'],
+                           stats['specifics']['grade'],
+                           stats['specifics']['graded'],
+                           stats['specifics']['discussion'])
     with open(filename, 'w') as f:
         f.write(string)
     pdf = weasyprint.HTML(filename).write_pdf()
     open("report_" + str(date.today()) + ".pdf", 'wb').write(pdf)
 
 
-def main(usage: str, full_time: str, part_time: str, semester: str):
+def main(usage: str, full_time: str, part_time: str, semester: str, total_courses: int):
     """
     :param usage: The filename of the usage file.
     :param full_time: The filename for the list of full-time faculty.
     :param part_time: The filename fot the list of part-time faculty.
     :param semester: The name of the semester being processed in the format YYYY_Season.
+    :param total_courses:
     """
-    res = parse_files(usage, full_time, part_time, semester)
+    res = parse_files(usage, full_time, part_time, semester, total_courses)
     res = calculate_stats(res)
-    generate_document(res)
+    generate_document(res, semester)
     print("Document report generated.")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 5:
+    if len(sys.argv) != 6:
         print(__doc__)
         sys.exit(1)
     else:
-        main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+        main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], int(sys.argv[5]))
