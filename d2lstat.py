@@ -17,7 +17,10 @@ This program is the property of the UofS-CTLE.
 """
 
 import sys
+from datetime import date
 from typing import List
+
+import weasyprint
 
 DELIMITER = '|'
 
@@ -66,8 +69,6 @@ def remove_duplicate_crn(files_data: List) -> List[str]:
             ret_val.append(x)
     for x in ret_val:
         y = x.split(DELIMITER)
-        print(y[9][-5:])
-    print("Number of unique CRNs {}".format(len(files_data)))
     return ret_val
 
 
@@ -168,15 +169,13 @@ def generate_document(stats: dict):
     :param stats:
     :return:
     """
-    print('Courses with usage: {}'.format(stats['courses_with_usage']))
-    print('Faculty with usage: {}'.format(stats['faculty_with_usage']))
-    print('Full-time with usage: {}'.format(stats['full_time']))
-    print('Part-time: {}'.format(stats['part_time']))
-    print('Staff: {}'.format(stats['staff']))
-    print('Courses with Assignments: {}'.format(stats['specifics']['assignments']))
-    print('Courses with Grade Items: {}'.format(stats['specifics']['grade']))
-    print('Courses with Graded Grade Items: {}'.format(stats['specifics']['graded']))
-    print('Courses with Discussion Posts: {}'.format(stats['specifics']['discussion']))
+    filename = 'report_' + str(date.today()) + '.html'
+    with open('raw_html.html', 'r') as f:
+        string = f.read()
+    with open(filename, 'w') as f:
+        f.write(string)
+    pdf = weasyprint.HTML(filename).write_pdf()
+    open("report_" + str(date.today()) + ".pdf", 'wb').write(pdf)
 
 
 def main(usage: str, full_time: str, part_time: str, semester: str):
