@@ -1,3 +1,11 @@
-source venv/bin/activate
-python d2lstat.py $1 $2 $3 $4 $5
-deactivate
+if [ -d "$DIRECTORY" ]; then
+    source venv/bin/activate
+    python3 d2lstat.py $1 $2 $3 $4 $5
+    deactivate
+else
+    python3 -m virtualenv venv
+    pip3 install weasyprint
+    source venv/bin/activate
+    python3 d2lstat.py $1 $2 $3 $4 $5
+    deactivate
+fi
