@@ -147,13 +147,13 @@ def calculate_stats(file_data: dict) -> dict:
     }
     for course in file_data['semester_no_dup_crn']:
         x = course.split(DELIMITER)
-        if int(x[13]) <= 0:
+        if int(x[13]) > 0:
             specifics['assignments'] += 1
-        if int(x[15]) <= 2:
+        if int(x[15]) > 2:
             specifics['grade'] += 1
-        if int(x[16]) <= 0:
+        if int(x[16]) > 0:
             specifics['graded'] += 1
-        if int(x[18]) <= 0:
+        if int(x[18]) > 0:
             specifics['discussion'] += 1
     return {'courses_with_usage': len(file_data['semester_no_dup_crn']),
             'faculty_with_usage': len(file_data['semester_no_dup_r']),
