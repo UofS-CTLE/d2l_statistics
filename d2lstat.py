@@ -160,9 +160,8 @@ def calculate_stats(file_data: dict) -> dict:
             'specifics': specifics}
 
 
-def generate_document(stats: dict) -> dict:
+def generate_document(stats: dict):
     """
-
     :param stats:
     :return:
     """
