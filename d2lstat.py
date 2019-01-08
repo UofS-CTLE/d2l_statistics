@@ -140,17 +140,21 @@ def calculate_stats(file_data: dict) -> dict:
     :return: The statistics data required for the report generator.
     """
     specifics = {
-            'assignments': 0,
-            'grade': 0,
-            'graded': 0,
-            'discussion': 0
-            }
+        'assignments': 0,
+        'grade': 0,
+        'graded': 0,
+        'discussion': 0
+    }
     for course in file_data['semester_no_dup_crn']:
         x = course.split(DELIMITER)
-        if int(x[13]) <= 0: specifics['assignments'] += 1
-        if int(x[15]) <= 2: specifics['grade'] += 1
-        if int(x[16]) <= 0: specifics['graded'] += 1
-        if int(x[18]) <= 0: specifics['discussion'] += 1
+        if int(x[13]) <= 0:
+            specifics['assignments'] += 1
+        if int(x[15]) <= 2:
+            specifics['grade'] += 1
+        if int(x[16]) <= 0:
+            specifics['graded'] += 1
+        if int(x[18]) <= 0:
+            specifics['discussion'] += 1
     return {'courses_with_usage': len(file_data['semester_no_dup_crn']),
             'faculty_with_usage': len(file_data['semester_no_dup_r']),
             'full_time': len(file_data['full_time']),
@@ -173,7 +177,7 @@ def generate_document(stats: dict):
     print('Courses with Grade Items: {}'.format(stats['specifics']['grade']))
     print('Courses with Graded Grade Items: {}'.format(stats['specifics']['graded']))
     print('Courses with Discussion Posts: {}'.format(stats['specifics']['discussion']))
-    
+
 
 def main(usage: str, full_time: str, part_time: str, semester: str):
     """
