@@ -16,8 +16,8 @@ Sean Batzel <sean.batzel@scranton.edu>
 This program is the property of the UofS-CTLE.
 """
 
-import sys
 import csv
+import sys
 from datetime import date
 from typing import List
 
@@ -97,10 +97,29 @@ def parse_files(usage: str, full_time: str, part_time: str, semester: str, total
     :param total_courses:
     :return:
     """
-    with open(usage, mode="rU") as infile:
-        reader = csv.reader(infile, dialect="excel")
-        with open("tempUsage.txt", mode="w") as outfile:
-            writer = csv.writer(outfile, delimeter=DELIMITER)
+    with open(usage, mode='rU') as infile:
+        reader = csv.reader(infile, dialect='excel', delimiter=',', quotechar='"')
+        rows = list()
+        for row in reader:
+            rows.append(row)
+        with open(usage, mode='w') as outfile:
+            writer = csv.writer(outfile, delimiter=DELIMITER)
+            writer.writerows(rows)
+    with open(full_time, mode='rU') as infile:
+        reader = csv.reader(infile, dialect='excel', delimiter=',', quotechar='"')
+        rows = list()
+        for row in reader:
+            rows.append(row)
+        with open(full_time, mode='w') as outfile:
+            writer = csv.writer(outfile, delimiter=DELIMITER)
+            writer.writerows(rows)
+    with open(part_time, mode='rU') as infile:
+        reader = csv.reader(infile, dialect='excel', delimiter=',', quotechar='"')
+        rows = list()
+        for row in reader:
+            rows.append(row)
+        with open(part_time, mode='w') as outfile:
+            writer = csv.writer(outfile, delimiter=DELIMITER)
             writer.writerows(rows)
     one = filter_for_semester(open(usage, 'r').readlines(), semester)
     two = get_rows_with_usage(one)
